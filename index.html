@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Labo des Phobies</title>
+  <meta name="description" content="LEVEL13. Découvrez l'univers dp.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Nunito:wght@700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/" type="image/x-icon">
+  <style>
+    /* =========================================
+       PALETTE PHOEBE (Extrait des références)
+       ========================================= */
+    :root {
+      /* FOND COSMIQUE */
+      --bg-deep: #050a14;        /* Le fond le plus sombre */
+      --bg-mid: #0b1120;         /* Le fond des cartes/panneaux */
+      --bg-light: #1a2b4c;       /* Les éléments en relief */
+      
+      /* NÉONS LUMINEUX */
+      --neon-cyan: #4deeea;      /* Cyan électrique (Phoebe's aura) */
+      --neon-pink: #ff66b2;      /* Rose néon (Titres/Accents) */
+      --neon-green: #39ff14;     /* Vert acide (Flacons biologiques) */
+      --neon-purple: #7b2cbf;    /* Pourpre mystère (Niveaux supérieurs) */
+      --neon-yellow: #ffdd00;    /* Jaune attention (Filtres) */
+      
+      /* TEXTES */
+      --text-main: #f0f8ff;      /* Blanc légèrement bleuté */
+      --text-muted: #94a3b8;     /* Gris bleuté doux */
+      
+      /* GLASSMORPHISM (Effet Verre de Laboratoire) */
+      --glass-bg: rgba(11, 17, 32, 0.6);
+      --glass-border: rgba(77, 238, 234, 0.3); /* Bordure cyan subtile */
+      --glass-glow: 0 0 20px rgba(77, 238, 234, 0.15);
+    }
+
+    /* RESET & GLOBAL */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background-color: var(--bg-deep);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(123, 44, 191, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(77, 238, 234, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(57, 255, 20, 0.03) 0%, transparent 60%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* HEADER FUTURISTE */
+    header {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 1000px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 50px;
+      padding: 1px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(77, 238, 234, 0.05);
+    }
+    .logo {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-shadow: 0 0 10px rgba(77, 238, 234, 0.5);
+    }
+    .logo span { color: var(--neon-cyan); }
+    .nav { display: flex; gap: 20px; }
+    .nav a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .nav a:hover, .nav a.active { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
+
+    /* HERO SECTION */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 20px 50px;
+      position: relative;
+    }
+    .hero-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1100px;
+      width: 100%;
+      gap: 60px;
+    }
+    .hero-text { flex: 1; }
+    .hero-image { flex: 1; display: flex; justify-content: center; }
+    
+    .phoebe-frame {
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--neon-cyan), var(--neon-pink), var(--neon-purple), var(--neon-cyan));
+      padding: 6px;
+      box-shadow: 0 0 50px rgba(77, 238, 234, 0.3);
+      animation: spin-border 10s linear infinite;
+    }
+    .phoebe-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--bg-mid);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+    .phoebe-inner img { width: 100%; height: 100%; object-fit: cover; }
+
+    h1 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 3.5rem;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      text-shadow: 0 0 20px rgba(77, 238, 234, 0.3);
+    }
+    h1 span { color: var(--neon-pink); text-shadow: 0 0 20px rgba(255, 102, 178, 0.5); }
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      max-width: 500px;
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-left: 3px solid var(--neon-cyan);
+      border-radius: 0 10px 10px 0;
+    }
+
+    /* BOUTON NÉON */
+    .btn-main {
+      display: inline-block;
+      padding: 15px 40px;
+      background: transparent;
+      color: var(--neon-cyan);
+      border: 2px solid var(--neon-cyan);
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 800;
+      font-family: 'Nunito', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(77, 238, 234, 0.3), inset 0 0 15px rgba(77, 238, 234, 0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .btn-main:hover {
+      background: var(--neon-cyan);
+      color: var(--bg-deep);
+      box-shadow: 0 0 30px var(--neon-cyan);
+    }
+
+    /* TERMINAL PHOEBE */
+    .phoebe-terminal {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--neon-green);
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-top: 30px;
+      position: relative;
+      max-width: 500px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .phoebe-terminal::before {
+      content: 'PHOEBE SYSTEM v1.0';
+      position: absolute;
+      top: -10px;
+      left: 15px;
+      background: var(--neon-green);
+      color: var(--bg-deep);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+    .terminal-text {
+      color: var(--neon-green);
+      font-size: 0.9rem;
+      text-shadow: 0 0 5px var(--neon-green);
+    }
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1.1em;
+      background: var(--neon-green);
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      box-shadow: 0 0 5px var(--neon-green);
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* SECTION TITRES */
+    .section-title {
+      text-align: center;
+      font-family: 'Nunito', sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+    .section-title span { color: var(--neon-cyan); }
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 50px;
+    }
+
+    /* FILTRES */
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 8px 20px;
+      border: 1px solid var(--bg-light);
+      background: rgba(255,255,255,0.05);
+      color: var(--text-muted);
+      border-radius: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Quicksand', sans-serif;
+    }
+    .filter-btn:hover { border-color: var(--neon-cyan); color: var(--text-main); }
+    .filter-btn.active {
+      background: var(--neon-cyan);
+      color: var(--bg-deep);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px var(--neon-cyan);
+    }
+
+    /* GRILLE DES FIOLES (CARDS) */
+    .vial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .vial-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    .vial-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--neon-pink);
+      box-shadow: 0 10px 30px rgba(255, 102, 178, 0.2);
+    }
+    .vial-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .vial-card:hover::before { opacity: 1; }
+
+    .vial-img-container {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    .vial-img-container svg {
+      width: 100%;
+      max-height: 100%;
+      filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+      transition: filter 0.3s;
+    }
+    .vial-card:hover .vial-img-container svg { filter: drop-shadow(0 5px 20px rgba(255,255,255,0.3)); }
+    
+    .vial-title {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .vial-cat {
+      font-size: 0.75rem;
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    /* MODAL NÉON */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(5, 10, 20, 0.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 200;
+      padding: 1rem;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--bg-mid);
+      border: 2px solid var(--neon-cyan);
+      border-radius: 24px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 0 50px rgba(77, 238, 234, 0.2);
+    }
+    .modal-header {
+      background: rgba(77, 238, 234, 0.1);
+      padding: 20px 30px;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .modal-header h2 { 
+      color: var(--neon-cyan); 
+      font-family: 'Nunito', sans-serif; 
+      font-size: 1.5rem;
+      text-shadow: 0 0 10px rgba(77, 238, 234, 0.4);
+    }
+    .close-btn {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--text-muted);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .close-btn:hover { color: var(--neon-pink); border-color: var(--neon-pink); }
+    .modal-body { padding: 30px; }
+    .modal-section { margin-bottom: 25px; }
+    .modal-section h3 {
+      color: var(--neon-pink);
+      font-family: 'Nunito', sans-serif;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.2rem;
+    }
+    .modal-section p { color: var(--text-muted); }
+    .tool-box {
+      background: rgba(57, 255, 20, 0.1);
+      border-left: 3px solid var(--neon-green);
+      padding: 15px;
+      border-radius: 0 10px 10px 0;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+    }
+    .dp-hint {
+      background: rgba(123, 44, 191, 0.2);
+      border: 1px dashed var(--neon-purple);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      color: #d4b0ff;
+      font-weight: 700;
+      margin-top: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 3rem 1rem;
+      border-top: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0,0,0,0.3);
+      margin-top: 4rem;
+    }
+    .dp-ref { margin-top: 1rem; opacity: 0.7; font-size: 0.75rem; color: var(--neon-purple); letter-spacing: 1px; }
+
+    /* ANIMATIONS */
+    @keyframes spin-border {
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero-container { flex-direction: column-reverse; text-align: center; }
+      .hero-image { margin-bottom: 30px; }
+      .phoebe-frame { width: 250px; height: 250px; margin: 0 auto; }
+      h1 { font-size: 2.5rem; }
+      .btn-main { width: 100%; text-align: center; }
+      .hero-desc { text-align: left; margin: 0 auto 30px; }
+      .phoebe-terminal { margin: 0 auto; text-align: left; }
+      header { width: 95%; padding: 10px 15px; }
+      .logo { font-size: 1.1rem; }
+      .nav { display: none; } /* Simplified for mobile */
+    }
+
+    /* Toggle audio — position DROITE + néon fushia */
+#audioToggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px; /* ← CHANGEMENT : droite au lieu de centre */
+    left: auto;  /* ← CHANGEMENT : annule le centrage */
+    transform: none; /* ← CHANGEMENT : supprime translateX */
+    z-index: 100;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 0, 150, 0.4); /* ← CHANGEMENT : bordure rose */
+    border-radius: 50%;
+    background: rgba(10, 10, 15, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    opacity: 0.9;
+    /* ← AJOUT : glow néon permanent subtil */
+    box-shadow: 0 0 10px rgba(255, 0, 150, 0.2), 
+                0 0 20px rgba(255, 0, 150, 0.1);
+}
+
+/* Hover + actif — néon intense */
+#audioToggle:hover,
+#audioToggle.active {
+    border-color: #FF00AA; /* ← CHANGEMENT : rose fushia pur */
+    color: #FF00AA;
+    opacity: 1;
+    /* ← AJOUT : glow néon puissant */
+    box-shadow: 0 0 15px rgba(255, 0, 170, 0.6), 
+                0 0 30px rgba(255, 0, 170, 0.4),
+                0 0 45px rgba(255, 0, 170, 0.2);
+    animation: pulse-neon 2s ease-in-out infinite;
+}
+
+/* ← AJOUT : animation pulsation néon */
+@keyframes pulse-neon {
+    0%, 100% { 
+        box-shadow: 0 0 15px rgba(255,0,170,0.6), 
+                    0 0 30px rgba(255,0,170,0.4); 
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(255,0,170,0.9), 
+                    0 0 40px rgba(255,0,170,0.6),
+                    0 0 60px rgba(255,0,170,0.3); 
+    }
+}
+
+/* Icônes — couleur néon */
+#audioToggle svg {
+    width: 18px;
+    height: 18px;
+    transition: opacity 0.2s ease, stroke 0.2s ease;
+    stroke: #FF66CC; /* ← CHANGEMENT : rose clair par défaut */
+}
+#audioToggle:hover svg,
+#audioToggle.active svg {
+    stroke: #FF00AA; /* ← CHANGEMENT : rose fushia au hover/actif */
+}
+
+/* Hint — coordonné néon */
+#audioHint {
+    position: fixed;
+    bottom: 80px;
+    right: 24px; /* ← CHANGEMENT : aligné à droite sous l'icône */
+    left: auto;
+    transform: none;
+    z-index: 99;
+    padding: 6px 14px;
+    background: rgba(26, 26, 36, 0.98);
+    border: 1px solid rgba(255, 0, 170, 0.5); /* ← CHANGEMENT : bordure rose */
+    border-radius: 18px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: #FF66CC; /* ← CHANGEMENT : texte rose */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(255, 0, 170, 0.4); /* ← AJOUT : glow texte */
+}
+#audioHint.visible { opacity: 1; }
+
+
+
+
+/* === SCROLLBAR LISANOX STYLE === */
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0A0A0F;
+    border-left: 1px solid rgba(255,255,255,0.03);
+}
+::-webkit-scrollbar-thumb {
+    background: #4A3B8C;
+    border-radius: 4px;
+    transition: background 0.25s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #5A4B9C;
+    box-shadow: 0 0 12px rgba(74,59,140,0.5);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #2fdf2f #0A0A0F;
+}
+
+/* Optionnel : désactiver sur mobile si besoin */
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+}
+
+#observatoire { min-height: 50vh; padding-bottom: 7rem; padding-top: 9rem;}
+#protocoles { min-height: 50vh; padding-bottom: 7rem; padding-top: 9rem;}
+#archives { min-height: 50vh; padding-bottom: 7rem; padding-top: 9rem;}
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"><span></a></span>LEVEL13</div>
+    <nav class="nav">
+
+      </nav>
+  </header>
+
+ 
+
+
+  <footer>
+    <p>© <span id="year"></span> LEVEL13</p>
+
+    <div class="dp-ref">◈ UN PROJET DE L'UNIVERS dp ◈ ACCÈS RESTREINT NIVEAU 3 REQUIS POUR DOSSIERS NON-CLASSIFIÉS ◈</div>
+  </footer>
+
+  <script>
+    const phobiesData = [
+      {
+        id: 'acrophobie', name: 'Acrophobie', category: 'spatiale', color: 'var(--neon-cyan)',
+        etym: 'akros (haut) + phobos (peur)',
+        hook: 'Le vertige n\'est pas une faiblesse. C\'est un message.',
+        desc: 'Peur intense des hauteurs et du vide. Le corps réagit avant même que l\'esprit ne comprenne le danger.',
+        mech: 'Hypersensibilité vestibulaire couplée à une suractivation de l\'amygdale. Le cerveau anticipe une chute avant même qu\'elle ne soit probable.',
+        tool: 'Ancrage 5-4-3-2-1 : Identifiez 5 objets visibles, 4 sensations tactiles, 3 sons audibles, 2 odeurs, 1 goût. Ramène le cortex préfrontal en ligne.',
+        dp: 'Observation #04 — Les mécanismes d\'équilibre sont étudiés sous pression.'
+      },
+      {
+        id: 'agoraphobie', name: 'Agoraphobie', category: 'spatiale', color: 'var(--neon-cyan)',
+        etym: 'agora (place publique) + phobos',
+        hook: 'Ce n\'est pas l\'espace qui effraie. C\'est la perception de ne pouvoir en sortir.',
+        desc: 'Peur des espaces ouverts, des foules ou des situations d\'où s\'échapper semble difficile.',
+        mech: 'Anxiété anticipatoire liée à la perte de contrôle. Le système nerveux perçoit l\'environnement comme un piège potentiel.',
+        tool: 'Respiration 4-7-8 : Inspirez 4s, retenez 7s, expirez 8s. Réactive le système parasympathique et baisse le cortisol.',
+        dp: 'Observation #07 — Les frontières entre sécurité et confinement sont floues.'
+      },
+      {
+        id: 'arachnophobie', name: 'Arachnophobie', category: 'biologique', color: 'var(--neon-green)',
+        etym: 'arachne (araignée) + phobos',
+        hook: 'La réaction est rapide. L\'analyse vient après. Le Labo observe les deux.',
+        desc: 'Peur marquée des araignées et arachnides, souvent disproportionnée au risque réel.',
+        mech: 'Conditionnement évolutif + reconnaissance visuelle accélérée. Le cerveau utilise des patterns primitifs de détection de menace.',
+        tool: 'Relecture mentale : Observez l\'objet de peur à distance. Notez 3 détails neutres. Désactivez l\'amplification émotionnelle.',
+        dp: 'Observation #12 — Les stimuli visuels restent une porte d\'accès prioritaire.'
+      },
+      {
+        id: 'ligyrophobie', name: 'Ligyrophobie', category: 'sensorielle', color: 'var(--neon-yellow)',
+        etym: 'ligyros (bruyant) + phobos',
+        hook: 'Le bruit n\'est pas le problème. C\'est la perte de contrôle sur ce qu\'il provoque.',
+        desc: 'Peur des bruits forts, soudains ou imprévisibles. Le système auditif devient une alerte permanente.',
+        mech: 'Surcharge sensorielle + réponse de sursaut amplifiée. Le tronc cérébral traite le son comme un signal de danger immédiat.',
+        tool: 'Isolement sensoriel contrôlé : Utilisez des protections auditives, respirez lentement. Réduisez le volume avant de réduire la peur.',
+        dp: 'Observation #09 — Les signaux sonores non-filtrés altèrent la perception temporelle.'
+      },
+      {
+        id: 'onirophobie', name: 'Onirophobie', category: 'abstraite', color: 'var(--neon-purple)',
+        etym: 'oneiros (rêve) + phobos',
+        hook: 'La nuit n\'est pas vide. Elle est pleine de ce que le jour ignore.',
+        desc: 'Peur des rêves, des cauchemars ou de la perte de conscience critique durant le sommeil.',
+        mech: 'Conscience réflexive en sommeil paradoxal + anxiété face à l\'imprévisibilité du contenu onirique.',
+        tool: 'Journal de bord nocturne : Notez 3 éléments avant de dormir. Donnez un cadre à l\'inconscient. Réduisez l\'inconnu.',
+        dp: 'Observation #13 — Dossier lié. Accès restreint. Le rêve n\'est qu\'une interface.'
+      },
+      {
+        id: 'neantophobie', name: 'Néantophobie', category: 'abstraite', color: 'var(--neon-purple)',
+        etym: 'néant (rien) + phobos',
+        hook: 'Quand tout se tait, la question persiste. Le Labo ne répond pas. Il écoute.',
+        desc: 'Peur du vide existentiel, de l\'absence de sens ou de la dissolution de la conscience.',
+        mech: 'Dissociation cognitive face à l\'infini conceptuel. Le cerveau tente de remplir un vide qu\'il ne peut cartographier.',
+        tool: 'Ancrage tactile + narration interne : Tenez un objet froid. Racontez-vous une histoire simple. La matière ancre l\'esprit.',
+        dp: 'Observation #?? — Classification en cours. Certains vides sont des portes.'
+      }
+    ];
+
+    // SVG Vial Generator
+    function getVialSVG(color) {
+      return `<svg viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="liquid" x1="0" y1="200" x2="0" y2="100" gradientUnits="userSpaceOnUse">
+            <stop stop-color="${color}" stop-opacity="0.9"/>
+            <stop offset="1" stop-color="${color}" stop-opacity="0.2"/>
+          </linearGradient>
+        </defs>
+        <img src="image/observatoire-icone.jpg" alt="PHOEBE">  
+      </svg>`;
+    }
+
+    const grid = document.getElementById('vial-grid');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const closeModalBtn = document.getElementById('close-modal');
+    const phoebeText = document.getElementById('phoebe-text');
+    const yearSpan = document.getElementById('year');
+    yearSpan.textContent = new Date().getFullYear();
+
+    function renderVials(filter = 'all') {
+      grid.innerHTML = '';
+      const filtered = filter === 'all' ? phobiesData : phobiesData.filter(p => p.category === filter);
+      
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'vial-card';
+        card.dataset.id = p.id;
+        card.innerHTML = `
+          <div class="vial-img-container">${getVialSVG(p.color)}</div>
+          <div class="vial-title">${p.name}</div>
+          <div class="vial-cat">${p.category}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openModal(id) {
+      const p = phobiesData.find(x => x.id === id);
+      if (!p) return;
+      modalTitle.innerHTML = `DOSSIER : ${p.name.toUpperCase()}`;
+      modalBody.innerHTML = `
+        <div class="modal-section">
+          <h3>🏷️ Étymologie</h3>
+          <p style="color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace;">${p.etym}</p>
+        </div>
+        <div class="modal-section">
+          <h3>🔊 Immersion</h3>
+          <p style="color: var(--text-main); font-style: italic; border-left: 3px solid var(--neon-cyan); padding-left: 1rem;">"${p.hook}"</p>
+        </div>
+        <div class="modal-section">
+          <h3>🧬 Mécanisme Cérébral</h3>
+          <p>${p.desc}</p>
+          <p style="margin-top: 0.5rem;">${p.mech}</p>
+        </div>
+        <div class="modal-section">
+          <h3>🛡️ Outil du Labo</h3>
+          <div class="tool-box">${p.tool}</div>
+        </div>
+        <div class="dp-hint">🔐 ${p.dp}</div>
+      `;
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    closeModalBtn.addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const vial = e.target.closest('.vial-card');
+      if (vial) openModal(vial.dataset.id);
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderVials(btn.dataset.filter);
+      });
+    });
+
+    // Typewriter PHOEBE
+    const phoebeMsg = "Bienvenue au Labo. Ici, les peurs sont observées, jamais jugées. Choisissez un dossier, activez un protocole, ou restez en silence.";
+    let charIndex = 0;
+    function typeWriter() {
+      if (charIndex < phoebeMsg.length) {
+        phoebeText.innerHTML = `<span class="terminal-text">${phoebeMsg.substring(0, charIndex)}</span><span class="cursor"></span>`;
+        charIndex++;
+        setTimeout(typeWriter, 25 + Math.random() * 20);
+      } else {
+        phoebeText.innerHTML = `<span class="terminal-text">${phoebeMsg}</span><span class="cursor"></span>`;
+      }
+    }
+    
+    renderVials();
+    setTimeout(typeWriter, 800);
+  </script>
+
+  
+<!-- Container "13" (Overlay) -->
+<div id="thirteen-layer" style="position:fixed; inset:0; pointer-events:none; z-index:5; overflow:hidden;"></div>
+
+<!-- Styles pour l'animation et le rendu visuel -->
+<style>
+    /* Conteneur de chaque "13" */
+    .thirteen {
+        position: absolute;
+        pointer-events: none;
+        transform: rotate(var(--rotation));
+        transform-origin: center;
+        will-change: transform, opacity;
+    }
+
+    /* Le SVG en lui-même */
+    .thirteen svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    /* Le tracé (Path) du 13 */
+    .thirteen path {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: var(--stroke-width, 2);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        
+        /* Préparation de l'animation "dessin" */
+        stroke-dasharray: var(--dash-length, 160);
+        stroke-dashoffset: var(--dash-length, 160);
+        
+        /* Animations : Écriture puis Disparition */
+        animation: write var(--write-duration, 3s) cubic-bezier(0.4, 0, 0.2, 1) forwards, 
+                   fadeOut 1.5s ease-in var(--fade-delay, 3s) forwards;
+    }
+
+    /* Variante PREMIER PLAN */
+    .thirteen.foreground {
+        z-index: 20;
+        filter: drop-shadow(0 0 var(--glow-size, 10px) currentColor);
+        opacity: 0.95;
+    }
+
+    /* Variante ARRIÈRE-PLAN */
+    .thirteen.background {
+        z-index: 1;
+        opacity: 0.5;
+        filter: drop-shadow(0 0 var(--glow-size, 15px) currentColor);
+    }
+
+    /* Keyframes d'animation */
+    @keyframes write {
+        to { stroke-dashoffset: 0; }
+    }
+    @keyframes fadeOut {
+        to { opacity: 0; transform: rotate(var(--rotation)) scale(0.9); }
+    }
+
+    /* Ajustement Mobile */
+    @media (max-width: 768px) {
+        .thirteen { max-width: 150px; max-height: 150px; }
+    }
+</style>
+
+<!-- Script de génération et d'animation -->
+<script>
+(function() {
+    // === ⚙️ PARAMÈTRES AJUSTABLES ===
+    const CONFIG = {
+        // Taille : base en px, multiplicateur max (1x à 5x)
+        sizeBase: 60,
+        sizeMaxMultiplier: 5,
+        
+        // Palette de couleurs (ajoute/supprime des hex ici)
+        colors: [
+            { hex: '#4A3B8C', name: 'violet', glow: 0.5 },   // Indigo dp
+            { hex: '#FF00AA', name: 'fuchsia', glow: 0.8 },  // Néon rose
+            { hex: '#8899B3', name: 'argent', glow: 0.6 }    // Silver dp
+        ],
+        
+        // Variations de forme "13" manuscrit (SVG paths)
+        // Ajoute autant de variations que tu veux ici
+        paths: [
+           // Style 1: perso/ calligraphique
+            "m 2 5 L 5 1 L 5 22 M 12 1 C 14 1 18 1 19 4 C 19 7 17 8 14 10 C 14 10 19 11 20 13 C 22 16 20 22 11 22",
+
+
+           // Style 1: Élégant / calligraphique
+                "M 20 15 L 18 50 M 30 15 C 50 5, 55 25, 45 30 C 55 35, 45 50, 25 50",
+            // Style 5: Fluide / continu
+                "M 20 15 L 18 50 M 30 15 C 52 8, 58 22, 52 32 C 58 42, 48 52, 28 52",
+            // Style 7: Dramatique / contrasté
+                "M 22 10 L 18 52 M 34 14 C 54 6, 56 26, 46 32 C 54 40, 46 52, 26 52"
+        
+        ],
+        
+        // Épaisseur du trait (min/max en px)
+        strokeWidthMin: 1.5,
+        strokeWidthMax: 4,
+        
+        // Vitesse d'écriture (min/max en secondes)
+        writeDurationMin: 2,
+        writeDurationMax: 4,
+        
+        // Délai avant disparition (après la fin de l'écriture)
+        fadeDelay: 1,
+        
+        // Fréquence d'apparition (min/max en ms)
+        spawnDelayMin: 6000,
+        spawnDelayMax: 15000,
+        
+        // Maximum de "13" simultanés à l'écran
+        maxInstances: 3,
+        
+        // Probabilité d'être au premier plan (0.0 à 1.0)
+        foregroundProbability: 0.25,
+        
+        // Rotation max en degrés (-X à +X)
+        rotationMax: 35,
+        
+        // Marges par rapport aux bords de l'écran (en px)
+        margin: 40
+    };
+
+    // === LOGIQUE INTERNE (ne pas modifier sauf si nécessaire) ===
+    const layer = document.getElementById('thirteen-layer');
+    let activeCount = 0;
+
+    // Fonction utilitaire : nombre aléatoire entre min et max
+    const rand = (min, max) => Math.random() * (max - min) + min;
+    
+    // Fonction utilitaire : élément aléatoire d'un tableau
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    // Fonction principale pour créer un "13"
+    const spawnThirteen = () => {
+        if (activeCount >= CONFIG.maxInstances) return;
+        activeCount++;
+
+        // 1. Taille aléatoire (1x à 5x la base)
+        const scale = rand(1, CONFIG.sizeMaxMultiplier);
+        const size = CONFIG.sizeBase * scale;
+
+        // 2. Position aléatoire (avec marges)
+        const x = rand(CONFIG.margin, window.innerWidth - size - CONFIG.margin);
+        const y = rand(CONFIG.margin, window.innerHeight - size - CONFIG.margin);
+
+        // 3. Choix de la couleur
+        const colorConfig = pick(CONFIG.colors);
+        
+        // 4. Choix du style d'écriture (path SVG)
+        const pathD = pick(CONFIG.paths);
+        
+        // 5. Calcul de la longueur du tracé pour l'animation (approximative)
+        // Plus le path est complexe, plus la dash-length doit être grande
+        const dashLength = 120 + (pathD.length * 0.8);
+        
+        // 6. Épaisseur du trait aléatoire
+        const strokeWidth = rand(CONFIG.strokeWidthMin, CONFIG.strokeWidthMax);
+        
+        // 7. Vitesse d'écriture aléatoire
+        const writeDuration = rand(CONFIG.writeDurationMin, CONFIG.writeDurationMax);
+        const fadeDelay = writeDuration + CONFIG.fadeDelay;
+        
+        // 8. Rotation aléatoire
+        const rotation = rand(-CONFIG.rotationMax, CONFIG.rotationMax);
+        
+        // 9. Premier plan ou arrière-plan ?
+        const isForeground = Math.random() < CONFIG.foregroundProbability;
+        
+        // 10. Taille du glow en fonction de la couleur et de l'échelle
+        const glowSize = (colorConfig.glow * 10) + (scale * 2);
+
+        // Création du conteneur
+        const el = document.createElement('div');
+        el.className = `thirteen ${isForeground ? 'foreground' : 'background'}`;
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        el.style.width = `${size}px`;
+        el.style.height = `${size}px`;
+        el.style.color = colorConfig.hex;
+        el.style.setProperty('--rotation', `${rotation}deg`);
+        el.style.setProperty('--stroke-width', strokeWidth);
+        el.style.setProperty('--dash-length', dashLength);
+        el.style.setProperty('--write-duration', `${writeDuration}s`);
+        el.style.setProperty('--fade-delay', `${fadeDelay}s`);
+        el.style.setProperty('--glow-size', `${glowSize}px`);
+        
+        // Injection du SVG avec le path choisi
+        el.innerHTML = `
+            <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                <path d="${pathD}" />
+            </svg>
+        `;
+        
+        layer.appendChild(el);
+        
+        // Nettoyage automatique après la fin de l'animation
+        const totalDuration = (writeDuration + CONFIG.fadeDelay + 1.5) * 1000;
+        setTimeout(() => {
+            if (el.parentNode) {
+                el.style.transition = 'opacity 0.5s ease';
+                el.style.opacity = '0';
+                setTimeout(() => {
+                    el.remove();
+                    activeCount--;
+                }, 500);
+            }
+        }, totalDuration);
+    };
+
+    // Planification de la prochaine apparition
+    const scheduleNext = () => {
+        const delay = rand(CONFIG.spawnDelayMin, CONFIG.spawnDelayMax);
+        setTimeout(() => {
+            spawnThirteen();
+            scheduleNext();
+        }, delay);
+    };
+
+    // Démarrage après 3 secondes (laisser le loader du site finir)
+    setTimeout(scheduleNext, 3000);
+
+    // Pause si onglet inactif (économie ressources)
+    document.addEventListener('visibilitychange', () => {
+        // Optionnel : suspendre les spawns si l'onglet est caché
+    });
+})();
+</script>
+
+
+<!-- Toggle Icon (bas centre) -->
+<button id="audioToggle" aria-label="Ambiance onirique" title="Activer/couper le son" style="
+    position:fixed; bottom:133px; left:50%; transform:translateX(-50%); z-index:100;
+    width:40px; height:40px; border:1px solid rgba(255,255,255,0.12);
+    border-radius:50%; background:rgba(10,10,15,0.95);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition:all 0.25s ease; opacity:0.9;
+">
+    <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;transition:opacity 0.2s;">
+        <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+    </svg>
+    <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;opacity:0;position:absolute;transition:opacity 0.2s;">
+        <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+        <path d="M16 13a3 3 0 0 0 3-3" stroke-linecap="round"/>
+        <path d="M19 9a6 6 0 0 0 6-6" stroke-linecap="round" opacity="0.6"/>
+    </svg>
+</button>
+
+<!-- Audio Element -->
+<audio id="ambientAudio" loop preload="auto" playsinline>
+    <source src="audio/ambiance-onirique.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Script Ultra-Simple : Activation immédiate -->
+<script>
+(function() {
+    const audio = document.getElementById('ambientAudio');
+    const toggle = document.getElementById('audioToggle');
+    const iconOff = toggle.querySelector('.icon-off');
+    const iconOn = toggle.querySelector('.icon-on');
+    
+    audio.volume = 0.26; // -24 LUFS specs dp
+    let isPlaying = false;
+    let activated = false;
+
+    // Fonction d'activation audio + UI
+    const playAudio = async () => {
+        if (activated) return;
+        activated = true;
+        
+        try {
+            await audio.play();
+            isPlaying = true;
+            iconOff.style.opacity = '0';
+            iconOn.style.opacity = '1';
+            toggle.classList.add('active');
+            toggle.style.borderColor = '#4A3B8C';
+            toggle.style.boxShadow = '0 0 25px rgba(74,59,140,0.35)';
+        } catch (e) {
+            console.log('Audio blocked, waiting for next gesture');
+            activated = false; // Réessayer au prochain geste
+        }
+    };
+
+    // TOUS les événements possibles — sans filtre, sans condition
+    const events = [
+        'click','mousedown','mouseup','touchstart','touchend',
+        'keydown','keyup','wheel','scroll','mousemove','touchmove',
+        'focus','blur','resize','orientationchange'
+    ];
+
+    // Handler unique : joue + nettoie TOUT
+    const trigger = (e) => {
+        playAudio();
+        // Supprime TOUS les listeners après première tentative
+        events.forEach(evt => {
+            window.removeEventListener(evt, trigger, true);
+            window.removeEventListener(evt, trigger, false);
+            document.removeEventListener(evt, trigger, true);
+            document.removeEventListener(evt, trigger, false);
+        });
+    };
+
+    // Ajoute les listeners sur window ET document, capture ET bubble
+    events.forEach(evt => {
+        window.addEventListener(evt, trigger, true);
+        window.addEventListener(evt, trigger, false);
+        document.addEventListener(evt, trigger, true);
+        document.addEventListener(evt, trigger, false);
+    });
+
+    // Toggle manuel (mute/unmute) — toujours fonctionnel
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isPlaying) {
+            audio.pause();
+            isPlaying = false;
+            iconOff.style.opacity = '1';
+            iconOn.style.opacity = '0';
+            toggle.style.borderColor = 'rgba(255,255,255,0.12)';
+            toggle.style.boxShadow = 'none';
+        } else {
+            audio.play().then(() => {
+                isPlaying = true;
+                iconOff.style.opacity = '0';
+                iconOn.style.opacity = '1';
+                toggle.style.borderColor = '#4A3B8C';
+                toggle.style.boxShadow = '0 0 25px rgba(74,59,140,0.35)';
+            }).catch(() => {});
+        }
+    });
+
+    // Pause si onglet inactif
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && isPlaying) audio.pause();
+        else if (!document.hidden && isPlaying) audio.play().catch(()=>{});
+    });
+})();
+
+// === NAVIGATION DYNAMIQUE (Version Robuste) ===
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav a');
+
+function updateActiveNav() {
+  let currentId = '';
+  const offset = 120; // Compense la hauteur de ton header fixe
+  const scrollY = window.scrollY;
+
+  // Parcours normal : on garde la DERNIÈRE section dont le haut est passé
+  sections.forEach(section => {
+    if (scrollY >= section.offsetTop - offset) {
+      currentId = section.getAttribute('id');
+    }
+  });
+
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === `#${currentId}`) {
+      link.classList.add('active');
+    }
+  });
+}
+
+window.addEventListener('scroll', updateActiveNav, { passive: true });
+window.addEventListener('load', updateActiveNav);
+
+
+
+// === MODALES ARCHIVES ===
+const archiveModals = {
+  'archive-1': {
+    title: 'CARNET VISUEL',
+    content: `
+      <div class="modal-section">
+        <h3>📖 Esquisses & Planches</h3>
+        <p>Collection de représentations artistiques des phobies. Chaque planche est une tentative de traduire l'indicible en géométrie rassurante.</p>
+        <p style="margin-top:1rem; color:var(--neon-cyan); font-family:'JetBrains Mono',monospace;">[Galerie en cours de compilation]</p>
+      </div>`
+  },
+  'archive-2': {
+    title: 'ENCYCLOPÉDIE β',
+    content: `
+      <div class="modal-section">
+        <h3>🌐 Wiki Progressif</h3>
+        <p>Base de données ouverte et évolutive. Chaque phobie documentée alimente un réseau de liens croisés : mécanismes, symptômes, outils.</p>
+        <p style="margin-top:1rem;">L'accès complet sera débloqué par niveau d'observation.</p>
+      </div>`
+  },
+  'archive-13': {
+    title: 'NIVEAU 13 — DOSSIER LIÉ',
+    content: `
+      <div class="modal-section">
+        <h3>◈ CLASSIFIÉ</h3>
+        <p>Certaines observations dépassent le cadre clinique standard. Ce dossier contient des fragments non encore validés par le protocole officiel.</p>
+        <div class="dp-hint">⚠️ L'interface entre rêve, peur et perception n'est pas linéaire. Le Labo ne conclut pas. Il prépare.</div>
+      </div>`
+  }
+};
+
+document.querySelectorAll('.vial-card[data-modal]').forEach(card => {
+  card.addEventListener('click', () => {
+    const id = card.dataset.modal;
+    const data = archiveModals[id];
+    if (!data) return;
+    document.getElementById('modal-title').innerHTML = data.title;
+    document.getElementById('modal-body').innerHTML = data.content;
+    document.getElementById('modal-overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+});
+</script>
+</body>
+</html>
+
